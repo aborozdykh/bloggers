@@ -96,7 +96,8 @@ public class User implements UserDetails, Serializable {
     }
 
     public enum Role implements GrantedAuthority{
-        Student, Teacher, Teacher_Pres, Director, COMPANY_REPRES, COMPANY_DIR, ADMIN;
+
+        ADMIN;
 
         @Override
         public String getAuthority() {
