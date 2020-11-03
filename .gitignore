@@ -1,0 +1,14 @@
+*.class
+*.jar
+target
+
+*.iml
+.idea
+
+.git
+
+*.txt
+
+node_modules
+src/main/recources/static/vue
+package-lock.json

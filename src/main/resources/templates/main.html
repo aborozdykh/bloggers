@@ -1,0 +1,8 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="~{parts/head :: head('Midat')}"></head>
+<body>
+    <div id="main"></div>
+    <script th:src="${isDevMode} ? 'http://localhost:8000/main.bundle.js' : '/vue/main.bundle.js'"></script>
+</body>
+</html>

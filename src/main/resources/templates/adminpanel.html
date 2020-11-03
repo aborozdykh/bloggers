@@ -1,0 +1,9 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="~{parts/head :: head('Admin Panel | Midat')}"></head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+<body>
+    <div id="adminpanel"></div>
+    <script th:src="${isDevMode} ? 'http://192.168.0.103:8000/adminpanel.bundle.js' : '/vue/adminpanel.bundle.js'"></script>
+</body>
+</html>

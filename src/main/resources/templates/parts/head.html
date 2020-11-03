@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="head(title)">
+        <meta charset="UTF-8">
+        <meta name="theme-color" content="#1581b6">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+        <base href="/" />
+
+        <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+        <link rel="shortcut icon" href="/images/favicon.ico">
+
+        <script type="text/javascript" src="/js/common.js"></script>
+
+        <title th:text="${title}"></title>
+        <meta name="description" content="">
+        <meta name="keywords" content="">
+
+        <script th:inline="javascript">
+            var ServerData = {
+                'name' : [[${session.name}]],
+                'role' : [[${session.role}]],
+                'isDevMode' : [[${isDevMode}]],
+            };
+        </script>
+    </div>
+</body>
+</html>
