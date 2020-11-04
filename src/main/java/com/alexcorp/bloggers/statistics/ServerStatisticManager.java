@@ -69,28 +69,17 @@ public class ServerStatisticManager {
             }
         }
 
-        User user = userService.loadUserFromSession();
+      /*  User user = userService.loadUserFromSession();
 
         if(user == null){
             sortRequest(GUESTS, requestAddr);
             return;
         }
 
-        if(user.getAuthorities().contains(User.Role.COMPANY_REPRES)
-            || user.getAuthorities().contains(User.Role.ADMIN)) {
+        if(user.getAuthorities().contains(User.Role.ADMIN)) {
             sortRequest(ADMINS, requestAddr);
             return;
-        }
-
-        if(user.getAuthorities().contains(User.Role.Teacher)){
-            sortRequest(TEACHERS, requestAddr);
-            return;
-        }
-
-        if(user.getAuthorities().contains(User.Role.Student)){
-            sortRequest(STUDENTS, requestAddr);
-            return;
-        }
+        }*/
     }
 
     private void sortRequest(int role, String addr) {

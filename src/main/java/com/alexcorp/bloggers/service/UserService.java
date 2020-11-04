@@ -10,24 +10,17 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserService{
 
     @Autowired
     private UserRepository userRepository;
 
-    @Override
-    public User loadUserByUsername(String telNum) throws UsernameNotFoundException {
-        User user = userRepository.findByTelNumEndingWith(telNum);
-
-        /*if(user == null) {
-            throw new UsernameNotFoundException("User not found");
-        }*/
-        return user;
+    public User loadUserByUsername(String login) {
+        return null;
     }
 
     public User loadUserFromSession(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if(auth != null) return loadUserByUsername(auth.getName());
 
         return null;
     }

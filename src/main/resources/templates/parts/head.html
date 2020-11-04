@@ -21,11 +21,7 @@
         <meta name="keywords" content="">
 
         <script th:inline="javascript">
-            var ServerData = {
-                'name' : [[${session.name}]],
-                'role' : [[${session.role}]],
-                'isDevMode' : [[${isDevMode}]],
-            };
+            let ServerData = [[${ServerData}]];
         </script>
     </div>
 </body>

@@ -17,9 +17,9 @@ public class CustomAuthenticationManager implements AuthenticationManager {
     private UserService usersService;
 
     public Authentication authenticate(Authentication auth) throws AuthenticationException {
-        UserDetails user = usersService.loadUserByUsername(((User)auth.getPrincipal()).getUsername());
+        User user = usersService.loadUserByUsername(((User)auth.getPrincipal()).getEmail());
         if (user != null) {
-            return new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
+            return new UsernamePasswordAuthenticationToken(user, null, null);
         }
 
         return null;
