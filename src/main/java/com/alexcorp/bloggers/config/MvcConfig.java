@@ -7,6 +7,7 @@ import org.springframework.boot.web.server.ErrorPage;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.config.annotation.*;
 
 @Configuration
 @EnableWebMvc
+@ComponentScan("com.alexcorp.bloggers")
 public class MvcConfig implements WebMvcConfigurer {
 
     @Value("${spring.profiles.active}")
@@ -38,6 +40,7 @@ public class MvcConfig implements WebMvcConfigurer {
     public WebServerFactoryCustomizer<ConfigurableServletWebServerFactory> webServerCustomizer() {
         return container -> {
             container.addErrorPages(new ErrorPage(HttpStatus.NOT_FOUND, "/"));
+            container.addErrorPages(new ErrorPage(HttpStatus.METHOD_NOT_ALLOWED, "/"));
         };
     }
 

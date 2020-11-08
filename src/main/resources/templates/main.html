@@ -2,18 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:include="~{parts/head :: head('Midat')}"></head>
 <body>
-    <div class="demo">
-        <div th:if="${ServerData.profile}">
-            <b>User</b>
-            <b><a href="/logout">Выйти</a></b>
-            <div th:text="${ServerData.profile.email}"></div>
-        </div>
-        <div th:unless="${ServerData.profile}">
-            <a href="/login">Login</a>
-        </div>
-    </div>
-
     <div id="main"></div>
-    <script th:src="${isDevMode} ? 'http://localhost:8000/main.bundle.js' : '/vue/main.bundle.js'"></script>
+    <script th:src="${ServerData.isDevMode} ? 'http://localhost:8000/main.bundle.js' : '/vue/main.bundle.js'"></script>
 </body>
 </html>
