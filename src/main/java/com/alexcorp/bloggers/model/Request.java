@@ -23,6 +23,12 @@ public class Request {
         this.connection = connection;
     }
 
+    public Request header(String name, String value) {
+        connection.setRequestProperty(name, value);
+
+        return this;
+    }
+
     public Request Post(Map<String, Object> params, String contentType) throws IOException {
         String data;
         if(contentType.equals(CONTENT_TYPE_URL_ENCODED)) data = writeUrlEncoded(params);
@@ -48,6 +54,7 @@ public class Request {
 
         connection.setRequestMethod("GET");
         connection.setRequestProperty("Content-Type", CONTENT_TYPE_JSON);
+        connection.setRequestProperty("Accept", CONTENT_TYPE_JSON);
         connection.setFixedLengthStreamingMode(body.length);
 
         try(OutputStream outputStream = connection.getOutputStream()) {
@@ -67,14 +74,24 @@ public class Request {
     }
 
     public Map<String, Object> then(RequestHandler handler) throws IOException {
-        //error();
+        Reader streamReader;
+        int status = connection.getResponseCode();
+        /*if (status > 299) {
+            InputStream is = connection.getErrorStream();
+            streamReader = new InputStreamReader(is);
+        } else {
+            streamReader = new InputStreamReader(connection.getInputStream());
+        }*/
+        streamReader = new InputStreamReader(connection.getInputStream());
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
+        BufferedReader reader = new BufferedReader(streamReader);
         StringBuilder response = new StringBuilder();
+        String inputLine;
 
-        while (reader.ready()) {
-            response.append(reader.readLine().trim());
+        while ((inputLine = reader.readLine()) != null) {
+            response.append(inputLine);
         }
+        reader.close();
 
         Map<String, Object> responseJson = new ObjectMapper().readValue(response.toString(), HashMap.class);
 

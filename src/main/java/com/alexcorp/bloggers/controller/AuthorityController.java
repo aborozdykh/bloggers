@@ -1,11 +1,13 @@
 package com.alexcorp.bloggers.controller;
 
+import com.alexcorp.bloggers.Views;
 import com.alexcorp.bloggers.domain.ConfirmCode;
 import com.alexcorp.bloggers.domain.User;
 import com.alexcorp.bloggers.dto.ErrorDto;
 import com.alexcorp.bloggers.dto.users.*;
 import com.alexcorp.bloggers.service.ConfirmCodeService;
 import com.alexcorp.bloggers.service.UserService;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,7 @@ public class AuthorityController {
     @Autowired
     private ConfirmCodeService codeService;
 
+    @JsonView(Views.UserPublickProfile.class)
     @PostMapping(value = "/v1/signin/processing")
     ResponseEntity signin(@Validated
                           @RequestBody LoginUserDto userDto) {
@@ -38,7 +41,7 @@ public class AuthorityController {
             User user = userService.loginUser(userDto);
 
             logger.info(String.format(LOGIN_RES, userDto.getLogin(), "Success"));
-            return new ResponseEntity<> (user, HttpStatus.OK);
+            return new ResponseEntity<> (HttpStatus.OK);
         }
         catch (Throwable throwable) {
             logger.info(String.format(LOGIN_RES, userDto.getLogin(), throwable.getMessage()));

@@ -8,8 +8,8 @@ import javax.validation.constraints.NotNull;
 public class BusinessSignupDto extends UserSignupDto{
 
     private @NotNull String companyName;
-    private @NotNull String webSiteLink;
-    private @NotNull String instLogin;
-    private @NotNull String facebookLogin;
+    private String webSiteLink;
+    private String instLogin;
+    private String facebookLogin;
 
 }

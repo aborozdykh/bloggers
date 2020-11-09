@@ -2,6 +2,7 @@ package com.alexcorp.bloggers.controller;
 
 import com.alexcorp.bloggers.domain.User;
 import com.alexcorp.bloggers.service.GoogleApiService;
+import com.alexcorp.bloggers.service.YouTubeApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,15 +22,22 @@ public class MainController {
     @Autowired
     private GoogleApiService googleApiService;
 
+    @Autowired
+    private YouTubeApiService youTubeApiService;
+
     @GetMapping("/")
     String main(@AuthenticationPrincipal User user, Model model){
         HashMap<Object, Object> data = new HashMap<>();
 
         data.put("user", extractUserInfo(user));
         data.put("isDevMode", profile.equals("dev"));
+
         data.put("google-signin", googleApiService.getLoginUrl());
         data.put("google-signup-blog", googleApiService.getRegistrationUrl(User.Role.BLOGGER));
         data.put("google-signup-busi", googleApiService.getRegistrationUrl(User.Role.BUSINESS));
+
+        data.put("youtube-signin", youTubeApiService.getLoginUrl());
+
 
         model.addAttribute("ServerData", data);
 

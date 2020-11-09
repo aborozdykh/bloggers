@@ -13,6 +13,6 @@ public class LoginUserDto {
 
     @NotNull
     @Size(min = 1)
-    private  String password;
+    private String password;
 
 }

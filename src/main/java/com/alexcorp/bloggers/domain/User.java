@@ -1,5 +1,6 @@
 package com.alexcorp.bloggers.domain;
 
+import com.alexcorp.bloggers.Views;
 import com.alexcorp.bloggers.dto.users.UserSignupDto;
 import com.alexcorp.bloggers.model.EmailUser;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -24,6 +25,7 @@ import java.util.Set;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User implements EmailUser, Serializable {
 
+    @JsonView(Views.UserPublickProfile.class)
     @Id
     @GeneratedValue(generator = "increment")
     @GenericGenerator(name = "increment", strategy = "increment")
@@ -32,6 +34,7 @@ public class User implements EmailUser, Serializable {
     @JsonIgnore
     protected String oauthId;
 
+    @JsonView(Views.UserPublickProfile.class)
     @Column(length = 64)
     protected String email;
     @Column(length = 16)
@@ -41,8 +44,10 @@ public class User implements EmailUser, Serializable {
     @Column(length = 128)
     protected String password;
 
+    @JsonView(Views.UserPublickProfile.class)
     @Column(length = 32)
     protected String name;
+    @JsonView(Views.UserPublickProfile.class)
     @Column(length = 32)
     protected String surname;
 
