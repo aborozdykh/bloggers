@@ -32,6 +32,10 @@ public class Blogger extends User {
     public Blogger(BloggerSignupDto userDto) {
         super(userDto);
 
+        init(userDto);
+    }
+
+    public void init(BloggerSignupDto userDto) {
         sex = userDto.getSex();
         langs = userDto.getLangs();
         specials = userDto.getSpecials();

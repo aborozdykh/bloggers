@@ -22,6 +22,10 @@ public class Business extends User {
     public Business(BusinessSignupDto userDto) {
         super(userDto);
 
+        init((userDto));
+    }
+
+    public void init(BusinessSignupDto userDto) {
         companyName = userDto.getCompanyName();
         webSiteLink = userDto.getWebSiteLink();
         instLogin = userDto.getInstLogin();

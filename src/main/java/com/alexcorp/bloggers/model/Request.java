@@ -67,6 +67,8 @@ public class Request {
     }
 
     public Map<String, Object> then(RequestHandler handler) throws IOException {
+        //error();
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
         StringBuilder response = new StringBuilder();
 
@@ -77,6 +79,17 @@ public class Request {
         Map<String, Object> responseJson = new ObjectMapper().readValue(response.toString(), HashMap.class);
 
         return handler.handle(responseJson);
+    }
+
+    public void error() throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8));
+        StringBuilder response = new StringBuilder();
+
+        while (reader.ready()) {
+            response.append(reader.readLine().trim());
+        }
+
+        System.out.println(response.toString());
     }
 
     private String writeJson(Map<String, Object> params) {

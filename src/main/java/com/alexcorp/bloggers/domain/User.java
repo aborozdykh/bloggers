@@ -1,6 +1,7 @@
 package com.alexcorp.bloggers.domain;
 
 import com.alexcorp.bloggers.dto.users.UserSignupDto;
+import com.alexcorp.bloggers.model.EmailUser;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -21,7 +22,7 @@ import java.util.Set;
 @Entity
 @Table(name = "USR")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class User implements Serializable {
+public class User implements EmailUser, Serializable {
 
     @Id
     @GeneratedValue(generator = "increment")
@@ -63,8 +64,13 @@ public class User implements Serializable {
     protected LocalDateTime lastLogin;
 
     public User(UserSignupDto userDto) {
+        init(userDto);
+    }
+
+    public void init(UserSignupDto userDto) {
         email = userDto.getEmail();
         phone = userDto.getPhone();
+
         name = userDto.getName();
         surname = userDto.getSurname();
         birthDate = userDto.getBirthDate();

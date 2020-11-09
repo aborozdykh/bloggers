@@ -5,7 +5,7 @@ import lombok.Data;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class UserSignupConfirmDto {
+public class UserPassResetDto {
 
     @NotNull
     private Integer code;

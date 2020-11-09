@@ -3,13 +3,13 @@
 <head th:include="~{parts/head :: head('Midat')}"></head>
 <body>
     <div class="demo">
-        <div th:if="${ServerData.code}">
-            <form th:action="${ServerData.url}" method="POST">
-                <input name="code" th:value="${ServerData.code}">
-                <input name="client_id" th:value="${ServerData.client_id}">
-                <input name="client_secret" th:value="${ServerData.client_secret}">
-                <input name="redirect_uri" th:value="${ServerData.redirect_uri}">
-                <input name="grant_type" th:value="${ServerData.grant_type}">
+        <div>
+            <form action="https://oauth2.googleapis.com/token" method="POST">
+                <input name="code" value="4/0AY0e-g4YkHWQV-Fmr9i1XLHTDnDP_lJ8HqZC_GXZWAezvLpuIZ2544T0Bj-0qhysTneRMQ">
+                <input name="client_id" value="389333469652-bs87o7v1q32lavcu2sq4dsil6gol39uc.apps.googleusercontent.com">
+                <input name="client_secret" value="yU7OmvBA_vR2zb76KGoNA0q1">
+                <input name="redirect_uri" value="https://accounts.google.com/o/oauth2/v2/auth?scope=openid email profile&access_type=offline&include_granted_scopes=true&redirect_uri=http://localhost:8080/v1/oauth/google/signup/BLOGGER&response_type=code&client_id=389333469652-bs87o7v1q32lavcu2sq4dsil6gol39uc.apps.googleusercontent.com">
+                <input name="grant_type" value="authorization_code">
                 <button type="submit">Send</button>
             </form>
         </div>

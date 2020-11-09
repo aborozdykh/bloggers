@@ -1,5 +1,6 @@
 package com.alexcorp.bloggers.service;
 
+import com.alexcorp.bloggers.domain.User;
 import com.alexcorp.bloggers.model.Request;
 import com.alexcorp.bloggers.utils.RequestManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +36,11 @@ public class GoogleApiService implements OAuthService {
     @Value("${oauth2.google.client.scope}")
     private String scope;
 
-    @Value("${oauth2.google.client.redirect}")
-    private String redirect;
+    @Value("${oauth2.google.client.redirect.signin}")
+    private String redirectSignin;
+
+    @Value("${oauth2.google.client.redirect.signup}")
+    private String redirectSignup;
 
     @Value("${oauth2.google.client.id_token.decoder}")
     private String idTokenDecoder;
@@ -44,12 +48,13 @@ public class GoogleApiService implements OAuthService {
     @Autowired
     private RequestManager requestManager;
 
-    public Map<String, Object> signin(String code) throws IOException {
+    public Map<String, Object> signin(String code, boolean sigiin) throws IOException {
         Map<String, Object> params = new HashMap<>();
         params.put("code", code);
         params.put("client_id", clientId);
         params.put("client_secret", clientSecret);
-        params.put("redirect_uri", host + redirect);
+        if(sigiin) params.put("redirect_uri", getRedirectSignin());
+        else params.put("redirect_uri", getRedirectSignup(User.Role.BLOGGER));
         params.put("grant_type", "authorization_code");
 
         String idToken = (String) RequestManager
@@ -74,9 +79,29 @@ public class GoogleApiService implements OAuthService {
                 "scope=" + scope + "&" +
                 "access_type=offline&" +
                 "include_granted_scopes=true&" +
-                //" state=state_parameter_passthrough_value&" +
-                "redirect_uri=" + host + redirect + "&" +
+                //"state={USER_TYPE}&" +
+                "redirect_uri=" + host + redirectSignin + "&" +
                 "response_type=code&" +
                 "client_id=" + clientId;
+    }
+
+    @Override
+    public String getRegistrationUrl(User.Role role) {
+        return userAuthorizationUri + "?" +
+                "scope=" + scope + "&" +
+                "access_type=offline&" +
+                "include_granted_scopes=true&" +
+                //"state={USER_TYPE}&" +
+                "redirect_uri=" + getRedirectSignup(role) + "&" +
+                "response_type=code&" +
+                "client_id=" + clientId;
+    }
+
+    public String getRedirectSignup(User.Role role) {
+        return host + redirectSignup.replace("{USER_TYPE}", role.name().toLowerCase());
+    }
+
+    public String getRedirectSignin() {
+        return host + redirectSignin;
     }
 }

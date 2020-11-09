@@ -29,6 +29,6 @@ public class ConfirmCode {
 
 
     public enum ConfirmType {
-        SIGNUP
+        CONFIRM_EMAIL, PASS_RESET
     }
 }

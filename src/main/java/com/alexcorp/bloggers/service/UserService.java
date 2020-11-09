@@ -4,10 +4,7 @@ import com.alexcorp.bloggers.domain.ConfirmCode;
 import com.alexcorp.bloggers.domain.User;
 import com.alexcorp.bloggers.domain.users.Blogger;
 import com.alexcorp.bloggers.domain.users.Business;
-import com.alexcorp.bloggers.dto.users.BloggerSignupDto;
-import com.alexcorp.bloggers.dto.users.BusinessSignupDto;
-import com.alexcorp.bloggers.dto.users.LoginUserDto;
-import com.alexcorp.bloggers.dto.users.UserSignupDto;
+import com.alexcorp.bloggers.dto.users.*;
 import com.alexcorp.bloggers.repository.UserRepository;
 import com.alexcorp.bloggers.utils.ValidateUtils;
 import lombok.Data;
@@ -42,6 +39,8 @@ public class UserService {
     @Autowired
     private ConfirmCodeService codeService;
 
+    @Autowired
+    private MailService mailService;
 
     public User getUserByLogin(String login) {
         LoginFormat loginFormat = new LoginFormat(login);
@@ -79,16 +78,20 @@ public class UserService {
             user = new User(userDto);
             user.setRoles(Collections.singleton(User.Role.ADMIN));
         }
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
         user = userRepository.save(user);
 
-        codeService.generateConfirmCode(user, ConfirmCode.ConfirmType.SIGNUP);
+        ConfirmCode confirmCode = codeService.generateConfirmCode(user, ConfirmCode.ConfirmType.CONFIRM_EMAIL);
+        mailService.send(Collections.singletonList(user), "E-Mail confirmation",
+                "Use code  " + confirmCode.getCode() + "\r\n" +
+                        "Or link: " + mailService.getHost() + "/signup/confirm?code=" + confirmCode.getCode());
 
         return user;
     }
 
     //Google oauth
-    public User registerUser(Map<String, Object> profile) throws Throwable {
+    public User registerUser(Map<String, Object> profile, User.Role role) throws Throwable {
         if(userRepository.existsByEmail((String) profile.get("email"))
                 || userRepository.existsByOauthId((String) profile.get("sub"))) {
             throw new Throwable("USER_ALREADY_EXIST");
@@ -103,28 +106,63 @@ public class UserService {
         user.setSurname((String) profile.get("family_name"));
 
         user.setActive(User.Active.ACTIVE);
+        user.setRoles(Collections.singleton(role));
 
-        user =  userRepository.save(user);
+        user = userRepository.save(user);
 
         return authenticateUser(user);
     }
 
-    public boolean checkSignupConfirmCode(Integer code) {
-        return codeService.checkConfirmCode(code, ConfirmCode.ConfirmType.SIGNUP);
+    public User confirmEmail(Integer code) throws Throwable {
+        ConfirmCode confirmCode = codeService.getConfirmCode(code, ConfirmCode.ConfirmType.CONFIRM_EMAIL);
+        User user = confirmCode.getUser();
+
+        user.setActive(User.Active.ACTIVE);
+        user = userRepository.save(user);
+
+        codeService.removeConfirmCode(confirmCode);
+
+        return user;
     }
 
-    public User setPassword(User user, String password) throws Throwable {
+    public User resetPassword(UserPassResetDto resetDto) throws Throwable {
+        ConfirmCode confirmCode = codeService.getConfirmCode(resetDto.getCode(), ConfirmCode.ConfirmType.PASS_RESET);
+        User user = confirmCode.getUser();
+
         if(user == null || user.getActive().equals(User.Active.BANNED)) {
-            throw new Throwable("USER_SET_PASS_ERROR");
+            throw new Throwable("USER_RESET_PASS_ERROR");
         }
 
-        password = passwordEncoder.encode(password);
+        String password = passwordEncoder.encode(resetDto.getPassword());
         user.setPassword(password);
-        user.setActive(User.Active.ACTIVE);
+
+        user =  userRepository.save(user);
+
+        codeService.removeConfirmCode(confirmCode);
+
+        return user;
+    }
+    ///// Sign Up /////
+
+    public User updateProfileInfo(UserSignupDto userDto) throws Throwable {
+        User user = getUserByLogin(userDto.getEmail());
+
+        if(user == null) {
+            throw new Throwable("USER_NOT_FOUND");
+        }
+
+        if (userDto instanceof BloggerSignupDto) {
+            user.init((BloggerSignupDto)userDto);
+        }
+        else if (userDto instanceof BusinessSignupDto) {
+            user.init((BusinessSignupDto) userDto);
+        }
+        else {
+            user.init(userDto);
+        }
 
         return userRepository.save(user);
     }
-    ///// Sign Up /////
 
     public User loginUser(LoginUserDto userDto) throws Throwable {
         User user = getUserByLogin(userDto.getLogin());
