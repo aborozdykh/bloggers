@@ -5,15 +5,16 @@ import com.alexcorp.bloggers.service.GoogleApiService;
 import com.alexcorp.bloggers.service.YouTubeApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Controller
+@RestController
 public class MainController {
 
     @Value("${spring.profiles.active}")
@@ -25,8 +26,8 @@ public class MainController {
     @Autowired
     private YouTubeApiService youTubeApiService;
 
-    @GetMapping("/")
-    String main(@AuthenticationPrincipal User user, Model model){
+    @GetMapping("/v1/init")
+    ResponseEntity init(@AuthenticationPrincipal User user){
         HashMap<Object, Object> data = new HashMap<>();
 
         data.put("user", extractUserInfo(user));
@@ -39,9 +40,7 @@ public class MainController {
         data.put("youtube-signin", youTubeApiService.getLoginUrl());
 
 
-        model.addAttribute("ServerData", data);
-
-        return "main";
+        return new ResponseEntity<>(data, HttpStatus.OK);
     }
 
     private Map<String, Object> extractUserInfo(User user) {
@@ -55,10 +54,5 @@ public class MainController {
         info.put("profile", user.getPhone() != null);
 
         return info;
-    }
-
-    @GetMapping("/add")
-    String add() {
-        return "add";
     }
 }

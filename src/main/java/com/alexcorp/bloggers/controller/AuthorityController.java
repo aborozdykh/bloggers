@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,7 +42,7 @@ public class AuthorityController {
             User user = userService.loginUser(userDto);
 
             logger.info(String.format(LOGIN_RES, userDto.getLogin(), "Success"));
-            return new ResponseEntity<> (HttpStatus.OK);
+            return new ResponseEntity<> (user, HttpStatus.OK);
         }
         catch (Throwable throwable) {
             logger.info(String.format(LOGIN_RES, userDto.getLogin(), throwable.getMessage()));
@@ -106,7 +107,6 @@ public class AuthorityController {
             return new ResponseEntity<>(new ErrorDto(throwable.getMessage()), HttpStatus.OK);
         }
     }
-
 
     private ResponseEntity handleSignup(UserSignupDto userDto) {
         try {

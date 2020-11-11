@@ -27,15 +27,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
             http
                 .antMatcher("/**").authorizeRequests()
-                .antMatchers("/", "/signin/**", "/v1/signin/**", "/signup/**", "/v1/signup/**", "/v1/oauth/**",
-                                        "/images/**", "/js/**", "/vue/**", "/error").permitAll()
+                .antMatchers("/v1/init", "/error", "/v1/logout",
+                            "/v1/signin/**", "/v1/signup/**", "/v1/oauth/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                     .formLogin()
                     .loginPage("/signin")
                     .permitAll()
                 .and()
-                    .logout().logoutSuccessUrl("/").permitAll()
+                    .logout().logoutUrl("/v1/logout").logoutSuccessUrl("/").permitAll()
                     .deleteCookies("JSESSIONID")
                     .logoutSuccessUrl("/")
                     .permitAll()
