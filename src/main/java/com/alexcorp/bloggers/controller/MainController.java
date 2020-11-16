@@ -2,6 +2,7 @@ package com.alexcorp.bloggers.controller;
 
 import com.alexcorp.bloggers.domain.User;
 import com.alexcorp.bloggers.service.GoogleApiService;
+import com.alexcorp.bloggers.service.InstagramApiService;
 import com.alexcorp.bloggers.service.YouTubeApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +27,9 @@ public class MainController {
     @Autowired
     private YouTubeApiService youTubeApiService;
 
+    @Autowired
+    private InstagramApiService instagramApiService;
+
     @GetMapping("/v1/init")
     ResponseEntity init(@AuthenticationPrincipal User user){
         HashMap<Object, Object> data = new HashMap<>();
@@ -38,6 +42,7 @@ public class MainController {
         data.put("google-signup-busi", googleApiService.getRegistrationUrl(User.Role.BUSINESS));
 
         data.put("youtube-signin", youTubeApiService.getLoginUrl());
+        data.put("inst-signin", instagramApiService.getLoginUrl());
 
 
         return new ResponseEntity<>(data, HttpStatus.OK);

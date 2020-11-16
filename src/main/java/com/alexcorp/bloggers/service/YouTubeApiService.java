@@ -1,5 +1,8 @@
 package com.alexcorp.bloggers.service;
 
+import com.alexcorp.bloggers.domain.YouTubeChannel;
+import com.alexcorp.bloggers.dto.YouTubeConnectionResultDto;
+import com.alexcorp.bloggers.model.ChannelInfo;
 import com.alexcorp.bloggers.utils.RequestManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.Header;
@@ -14,7 +17,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Service
@@ -22,6 +27,15 @@ public class YouTubeApiService extends OAuthService{
 
     @Value("${youtube.api.key}")
     private String apiKey;
+
+    @Value("${youtube.min.subs}")
+    private Integer minSubsCount;
+
+    @Value("${youtube.min.views}")
+    private Integer minViewsCount;
+
+    @Value("${youtube.min.videos}")
+    private Integer minVideosCount;
 
     @Autowired
     public YouTubeApiService(@Value("${server.domain.name}") final String host,
@@ -41,17 +55,34 @@ public class YouTubeApiService extends OAuthService{
 
     }
 
-    public Map<String, Object> channelInfo(String accessToken) throws Exception {
-        /*return RequestManager
-                .Request("https://youtube.googleapis.com/youtube/v3/channels?" +
-                        "part=" + "statistics&" +
-                        "mine=" + "true&" +
-                        "key=" + apiKey)
-                .header("Authorization", "Bearer " + accessToken)
-                .Get()
-                .then(response -> response);*/
+    public YouTubeConnectionResultDto validateChannelConnection(ChannelInfo channel) {
+        YouTubeConnectionResultDto result = new YouTubeConnectionResultDto();
 
-        return new ObjectMapper().readValue(sendGet(accessToken), HashMap.class);
+        result.setMinValues(minSubsCount, minViewsCount, minVideosCount);
+        result.setChannelValues(channel.getSubs(), channel.getViews(), channel.getVideos());
+
+        boolean allowed =
+                        channel.getSubs() >= minSubsCount &&
+                        channel.getViews() >= minViewsCount &&
+                        channel.getVideos() >= minVideosCount;
+
+        result.setAllowed(allowed);
+
+        return result;
+    }
+
+    public ChannelInfo channelInfo(String accessToken) throws Exception {
+        Map<String, Object> response = new ObjectMapper().readValue(sendGet(accessToken), HashMap.class);
+
+        ArrayList<LinkedHashMap> items = (ArrayList<LinkedHashMap>) response.get("items");
+        LinkedHashMap statistics = (LinkedHashMap)items.get(0).get("statistics");
+
+        ChannelInfo channelInfo = new ChannelInfo();
+        channelInfo.setSubs(Integer.valueOf((String) statistics.get("subscriberCount")));
+        channelInfo.setVideos(Integer.valueOf((String) statistics.get("videoCount")));
+        channelInfo.setViews(Integer.valueOf((String) statistics.get("viewCount")));
+
+        return channelInfo;
     }
 
     private String sendGet(String accessToken) throws Exception {
