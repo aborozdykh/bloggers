@@ -24,9 +24,9 @@ public class DataBaseService {
 
     @PostConstruct
     public void init() throws Throwable {
-        if(userService.getUserByLogin("alexwhitecorp@gmail.com") == null) {
+        if(userService.getUserByLogin("admin@gmail.com") == null) {
             UserSignupDto userDto = new UserSignupDto();
-            userDto.setEmail("alexwhitecorp@gmail.com");
+            userDto.setEmail("admin@gmail.com");
             userDto.setPhone("0679384857");
             userDto.setPassword("q");
             userDto.setName("Alex");

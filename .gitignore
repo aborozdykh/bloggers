@@ -9,6 +9,8 @@ target
 
 *.txt
 
+logs
+
 node_modules
 src/main/recources/static/vue
 package-lock.json
